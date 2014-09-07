@@ -1,9 +1,6 @@
 package barbut.game;
 
-
 import java.util.Arrays;
-
-
 
 public class Test {
 
