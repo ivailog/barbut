@@ -8,5 +8,4 @@ public class Test {
 		System.out.println( new RollScoreCalculator().calculate( Arrays.asList(  1 , 2, 3   ) ) );
 		
 	}
-
 }
