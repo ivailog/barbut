@@ -11,6 +11,8 @@ public class Game {
 	private int currentScore;
 	private List<Dice> dices;
 	private boolean gameStarted;
+	private RollScoreCalculator scoreCalculator;
+	private RollScoreType prevScoreType;
 	
 	public Game(List<Player> players) {
 		this.players = players;
@@ -36,12 +38,46 @@ public class Game {
 				dicesToRoll.add(dice);
 		}
 		
-		for (Dice dice : dicesToRoll)
+		List<Integer> rolledNumbers = new ArrayList<Integer>();
+		for (Dice dice : dicesToRoll) {
 			dice.roll();
+			rolledNumbers.add(Integer.valueOf(dice.getValue()));
+			
+		}
 		
 		//calculate score
+		RollScore score = scoreCalculator.calculate(rolledNumbers);
+		if (prevScoreType != null) {
+			
+			//Confirm 1000 points
+			if (prevScoreType == RollScoreType._1000_POINTS) {
+				
+				if (score.getScore() > 0) {
+					//confirmed
+					currentScore += 1000;
+				} else {
+					currentScore = 0;
+					switchPlayer();
+				}
+				
+			}
+			
+			
+		}
 		
 	}
+	
+	private void switchPlayer() {
+		//set current player score
+		Player currentPlayer = players.get(currentPlayerIndex);
+		currentPlayer.setScore(currentScore);
+		currentScore = 0;
+		prevScoreType = null;
+		
+		//switch to next player
+		currentPlayerIndex = ( ++currentPlayerIndex ) % players.size();
+	}
+	
 	
 	private void initOrResetDices() {
 		if (dices == null)
@@ -63,6 +99,14 @@ public class Game {
 
 	public Player getCurrentPlayer() {
 		return players.get(currentPlayerIndex);
+	}
+
+	public RollScoreCalculator getScoreCalculator() {
+		return scoreCalculator;
+	}
+
+	public void setScoreCalculator(RollScoreCalculator scoreCalculator) {
+		this.scoreCalculator = scoreCalculator;
 	}
 
 
